@@ -7,18 +7,115 @@ a:visited {color:#0000ff;}
 a:active {color:#ff0000;}
 a:hover {color:#ff0000;} 
 </style>
-<script type="text/javascript
-   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUY5-pBOvMPJsgOP9b1BzTLP2LTclpKhA">
+<script type="text/javascript"
+//
+// *** FIX THE LINE BELOW TO USE YOU GOOGLE MAPS API KEY
+//
+      src="https://maps.googleapis.com/maps/api/js?key="AIzaSyBUY5-pBOvMPJsgOP9b1BzTLP2LTclpKhA">
 </script>
 <script type="text/javascript">
+//
+// format for the my_locations array is:
+//   
+//  var my_locations =[ 
+//  ["first text string for the tooltip",
+//   "2nd text string for the descriptions below the map", 
+//    marker lat, marker long, "marker letter" , "marker color string in hex"],
+//  [ ... same six items as the previous row for the 2nd location ...],
+//  [ ... same six items as the previous row for the 3rd location ...],
+//  .
+//  .
+//  [ ... same six items as the previous row for the last location ...]
+//  ]; 
+//
+var my_locations =[
+  ["Valley Forge PA Dec 19 1777 - June 19 1778",
+   "Privates John Stround and Henry Williamson (Clarke's 1st NC Continental Line, LaFayettes Division)<br>George Washington's army spends the dreadful winter of 1777/1778 encamped 20 miles northwest of Philadelphia",
+   40.086061, -75.451270,"V","aaffaa"],
+  ["Kettle Creek Feb 14 1779",
+  "Capt. Nathaniel Austin (SC Militia)<br>Gen. Andrew Pickens and the 700 SC militia defeated a British force of 350 protecting the Savannah River.",
+  33.690796,-82.884563,"K","888888"],
+  ["Stono Ferry Jun 20, 1779",
+   "Sgt. Drury Johnson (1st SC Continental Line)<br>Opening battle of the British 'southern campaign' after the fall of Savannah. An American defeat and the patriots under Gen. Benjamin Lincoln fell back to Charleston.",
+   32.755824, -80.161543,"S","00ffff"],
+  ["Siege of Charleston Mar 29 - May 12 1780",
+   "Capt. Nathaniel Austin (SC Militia), Pvt. John Stroud (9th NC Continental Line), Sgt. Drury Johnson (1st SC  Continental Line) and Pvt. Henry Williamson (1st NC  Continental Line)<br>A major defeat of the southern patriots forces by Generals Clinton and Cornwallis. Charleston was taken and 5,000 patriots captured when the city surrendered.",
+   32.7942,-79.942017,"C","ffffff"],
+  ["Cowpens Jan 17 1781",
+   "Captains John Rainey, Nathaniel Austin and John Collins (all of the SC Militia)<br>Gen. Daniel Morgan and the American forces soundly defeat Banastre Tarleton",
+    35.132695, -81.808777,"C","ff0000"],
+  ["Guilford Courthouse Mar 15 1781",
+    "Pvt. Richard Hartsfield (NC Militia) and Capt. John Collins (SC Militia)<br>A pyrrhic victory by the British over Nathaniel Greene and patriot forces. Cornwallis retreats to Yorktown.",
+    36.133278, -79.840326,"G","00ff00"],
+  ["Quinby's Bridge Jul 17 1781",
+   "Captain John Brown of Kershaw's regiment was wounded while fighting with Gen Francis Marion -- the Swamp Fox. ",
+    33.0943369, -79.8081343 ,"Q","ff00ff"],
+  ["Eutaw Springs Sep 8 1781,",
+   "Pvt Richard Hartsfield (NC militia) Pvt Charles Price (British soldier 64th Regiment of Foot -- captured)<br>Nathaniel Greene and the patriots are tactically defeated by the British -- but the British retired to Charleston to await the end of the war.",
+   33.403605, -80.298084,"E","8888ff"],
+  ["Seige of Yorktown Sep 28-Oct 19 1781",
+   "Capt John Collins (fought as Lieutenant with the Virginia Militia)<br>Washington defeated Cornwallis and the British army surrendered -- effectively ending the revolutionary war.",
+    37.230697, -76.502674,"Y","ffff00"]
+];  
+var image_array= new Array();
 function initialize() {
-  var mapOptions = {
-    zoom: 18,
-    center: new google.maps.LatLng(29.719842, -95.340400)
-  };
-  var map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+// make a table for the text below the map
+  os="<table border='0'><tr><td colspan='2'><center><b>Some of the family's participation in the American Revolution</td></tr>";
+// create the map
+  var map = new google.maps.Map(document.getElementById("map_canvas"));  
+// create the bounds objects (to hold all the lat and lng values to find the extent of the map  
+  var bounds = new google.maps.LatLngBounds();
+// loop through all the locations in the b_locations array   
+  for (i=0; i  < my_locations.length; i++)                               
+       {
+        // create the lat lng object for this location
+           var thisLatLng = new google.maps.LatLng(my_locations[i][2], my_locations[i][3]); 
+        // add the lat/lng for this location to the list of bounds             
+           bounds.extend(thisLatLng);  
+        // create an image array object in the ith location of the image_array            
+           image_array [i]= new Image(); 
+        // specify the marker letter and the color of this location and store the image in an array           
+           image_array[i].src = 'http://www.googlemapsmarkers.com/v1/'+my_locations[i][4]+"/"+my_locations[i][5]+'/'; 
+        // create the marker           /
+           createMarker(i,thisLatLng,map);       
+        // add the data to the table
+        os=os+"<tr><td valign='top'><img src='"+image_array[i].src+"'></td><td><b>"+my_locations[i][0]+"</b><br>"+my_locations[i][1]+"</td></tr>"; 
+       }
+// fit the map to the bounds data
+  map.fitBounds(bounds);
+// end the table and display it in the DIV block with id="sol"
+  sol.innerHTML=os+"</table>";  
+}
+function createMarker(k,theLatLng,map) 
+{
+// this functions gets: k is the index (row) of the location, lat/lng, map object 
+//
+//  *** we use this function so that each marker has its own listener
+//  *** see this: http://stackoverflow.com/questions/15774011/googlemaps-the-addlistener-is-only-working-for-the-last-marker?rq=1
+//
+  var marker = new google.maps.Marker({
+            position: theLatLng,             // sets the lat/lng of the marker
+            map: map,                        // sets the map object
+            icon: image_array[k].src,        // sets the marker image 
+            title: my_locations[k][0]        // gets the tooltip text
+            });
+//
+// *** when the marker is clicked we zoom in and reset the center of the map to the marker co-ordinates
+//
+  google.maps.event.addListener(marker, 'click', function() {  // what to do when the used clicks the marker
+            map.setZoom(16);                                   // zoom to level 16
+            map.setCenter(theLatLng);                          // set the center of the map to the marker location 
+            });
 }
 </script>
 </head>
 <body onload="initialize()">
+
+<!--- the map is define on the page as a DIV block with id="map_canvas" and is 700 by 700 pixels with a black border -->
 <div id="map_canvas" style="border:solid black;1px;height:700px;width:700px;"></div>
+<p>
+<!--- the table is displayed below the map in a DIV block with id="sol" and is 700 pixels wide with a black border -->
+<div id="sol" style="border:solid black;1px;width:700px;">
+<p>
+</body>
+</html>
