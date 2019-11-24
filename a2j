@@ -1,7 +1,13 @@
-<DOCTYPE html>
 <html>
 <head>
-<script type="text/javascript" 
+<style type="text/css">
+body,td {font-family:Comic Sans MS;font-size:14px;}
+a:link {color:#0000ff;}
+a:visited {color:#0000ff;}
+a:active {color:#ff0000;}
+a:hover {color:#ff0000;} 
+</style>
+<script type="text/javascript
    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBUY5-pBOvMPJsgOP9b1BzTLP2LTclpKhA">
 </script>
 <script type="text/javascript">
