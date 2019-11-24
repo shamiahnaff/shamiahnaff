@@ -9,8 +9,6 @@ a:hover {color:#ff0000;}
 </style>
 <script type="text/javascript"
 //
-// *** FIX THE LINE BELOW TO USE YOU GOOGLE MAPS API KEY
-//
       src="https://maps.googleapis.com/maps/api/js?key="AIzaSyBUY5-pBOvMPJsgOP9b1BzTLP2LTclpKhA">
 </script>
 <script type="text/javascript">
